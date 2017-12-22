@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:comtest="http://www.zhang.people.com/schema/people"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.zhang.people.com/schema/people
+        http://www.zhang.people.com/schema/people.xsd">
+
+
+    <description>Spring beans配置</description>
+
+
+    <!-- student 实例-->
+    <bean id="jackstudent" class="com.dn.spring.postprocess.Student">
+        <property name="username" value="jack"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <!-- comtest:people 自定义标签-->
+    <!--xmlns:comtest="http://www.zhang.people.com/schema/people" 和spring.handlers先配置的连接一样-->
+    <comtest:people id="cutesource" name="一号门" age="3232"/>
+
+    <!--
+    <bean id="student" class="com.dongnao.jack.testbean.Student">
+            <property name="list[0]" value="1"></property>
+            <property name="list[1]" value="2"></property>
+            <property name="list[2]" value="3"></property>
+
+            <property name="mylist">
+                <list>
+                    <value>a</value>
+                    <value>b</value>
+                    <value>c</value>
+                </list>
+            </property>
+
+            <property name="param" value="1234"></property>
+            <property name="map">
+                <map>
+                    <entry key="key1" value="value1"></entry>
+                    <entry key="key2" value="value2"></entry>
+                </map>
+            </property>
+        </bean>
+    -->
+
+</beans>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="dn" version="2.5">
+
+    <!-- 加载spring 所有的配置文件-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:config/spring/applicationContext-*.xml
+        </param-value>
+    </context-param>
+
+    <!-- Log4j Log4j与spingMVC结合使用-->
+    <!--<context-param>-->
+    <!--<param-name>log4jRefreshInterval</param-name>-->
+    <!--<param-value>3000</param-value>-->
+    <!--</context-param>-->
+    <!--<context-param>-->
+    <!--<param-name>log4jConfigLocation</param-name>-->
+    <!--<param-value>classpath:config/log/log4j.properties</param-value>-->
+    <!--</context-param>-->
+    <!--<listener>-->
+    <!--<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>-->
+    <!--</listener>-->
+
+    <!-- logback  logback与spingMVC结合使用-->
+    <context-param>
+        <param-name>logbackConfigLocation</param-name>
+        <param-value>classpath:config/log/logback.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+    </listener>
+
+
+    <!--
+     web监听器说明：
+     listener 监听器标签，web监听器可以监听客户端的请求和服务端的操作，同时它可以监听,包括 ServletContext、HttpSession、ServletRequest等
+
+     监听器的启动顺序 ：监听器>>过滤器>>Servlet
+
+     加载spring容器,即父容器
+     -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+    <!--
+     filter 过滤器标签
+     过滤器的生命周期：
+     实例化==========>>Web.xml
+     初始化==========>>init()
+     过滤 ==========>>doFilter()
+     销毁 ==========>>destory()
+
+    说明：
+    1.当web 容器启动的时候，过滤器就已经加载并启动了
+    2.实例化只会实例化一次,也就是说 只在web启动时进行初始化操作
+
+    执行顺序：
+    web服务器根据Filter在web.xml中的注册顺序，决定先调用哪个Filter，当第一个Filter的doFilter方法被调用时，
+    web服务器会创建一个代表Filter链的FilterChain对象传递给该方法，在doFilter方法中，开发人员如果调用了FilterChain对象的doFilter方法，
+    则web服务器会检查FilterChain对象中是否还有filter，如果有，则调用第二个filter，如果没有，则调用目标资源。
+
+     Filter和Servlet区别:
+     实际上Filter和Servlet极其相似，区别只是Filter不能直接对用户生成响应。
+     实际上Filter里doFilter()方法里的代码就是从多个Servlet的service()方法里抽取的通用代码，通过使用Filter可以实现更好的复用。
+
+    Filter有如下几个用处：
+    1.在HttpServletRequest到达Servlet之前，拦截客户的HttpServletRequest。
+    2.根据需要检查HttpServletRequest，也可以修改HttpServletRequest头和数据。
+    3.在HttpServletResponse到达客户端之前，拦截HttpServletResponse。
+    4.根据需要检查HttpServletResponse，也可以修改HttpServletResponse头和数据。
+    -->
+    <!-- 解决post乱码 -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <!-- 过滤所有 -->
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!--
+        servlet 标签
+        Servlet 生命周期:
+        1.在Servlet的生命周期中，仅执行一次init()方法
+        2.service()方法 它是Servlet的核心，负责响应客户的请求.
+          由service()方法,根据提交方式,选择性的执行doGet()方法和doPost()方法等
+        3.destroy（）： 仅执行一次，在服务器端停止且卸载Servlet时执行该方法
+
+        相关类的说明:
+        Servlet接口和GenericServlet是不特定于任何协议的，而HttpServlet是特定于HTTP协议的类，
+        所以HttpServlet中实现了service()方法，并将请求ServletRequest、ServletResponse 强转为HttpRequest 和 HttpResponse
+    -->
+
+    <!-- spring 子容器入口，也就是 spring mvc 入口 DispatcherServlet 类 -->
+    <!-- 不论是子容器还是父容器都会调用 AbstractApplicationContext 中的 refresh() 方法，所以 refresh() 方法 会被调用两次 -->
+    <!-- springmvc的前端控制器 -->
+    <servlet>
+        <servlet-name>dn-spring-framework</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
+        <!--
+		contextConfigLocation不是必须的， 如果不配置contextConfigLocation，
+		 springmvc的配置文件默认在：WEB-INF/servlet的name+"-servlet.xml"
+		 -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/spring/springmvc.xml</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>detectAllHandlerMappings</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <!--
+        1.如果web.xml中配置了<load-on-startup>属性,在Tomcat初始化时按其值从小到大的顺序加载所有servlet的init方法
+        2.如果没有配置<load-on-startup>属性，容器初始化时不加载。在请求匹配的url时进行加载，
+          并且只加载最后一个servlet的init方法。其他的servlet不加载
+
+        -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <!-- 拦截所有资源请求 -->
+    <servlet-mapping>
+        <servlet-name>dn-spring-framework</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>

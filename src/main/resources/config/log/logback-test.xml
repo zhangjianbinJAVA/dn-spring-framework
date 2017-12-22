@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+scan:
+    当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
+scanPeriod:
+    设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
+debug:
+    当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+-->
+<configuration scan="true" scanPeriod="1 seconds" debug="true">
+    <!-- 尽量别用绝对路径，如果带参数不同容器路径解释可能不同,以下配置参数在pom.xml里 -->
+    <!-- 日志路径，这里是相对路径 -->
+    <property name="log.base" value="${log.base}"/>
+    <property name="log.moduleName" value="${log.moduleName}"/>  <!-- 模块名称， 影响日志配置名，日志文件名 -->
+    <property name="log.max.size" value="100MB"/> <!-- 日志文件大小 -->
+    <property name="log.encoding" value="UTF-8"/>
+
+    <!-- 日志文件输出 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            ${log.base}/${log.moduleName}.log
+        </File>
+        <encoding>${log.encoding}</encoding>
+        <append>true</append> <!--true：日志被追加到文件结尾，false：清空现存文件，默认是true-->
+        <!--
+         滚动记录文件
+
+        级别过滤器过滤器 LevelFilter，执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。
+
+        ThresholdFilter： 临界值过滤器，过滤掉低于指定临界值的日志。当日志级别等于或高于临界值时，过滤器返回NEUTRAL；
+        当日志级别低于临界值时，日志会被拒绝。
+
+        EvaluatorFilter： 求值过滤器，评估、鉴别日志是否符合指定条件。需要额外的两个JAR包，commons-compiler.jar和janino.jar
+
+        返回DENY，日志将立即被抛弃不再经过其他过滤器；
+        返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；
+        返回ACCEPT，日志会被立即处理，不再经过剩余过滤器。
+        -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>            <!-- 设置过滤级别-->
+            <onMatch>ACCEPT</onMatch>       <!--用于配置符合过滤条件的操作-->
+            <onMismatch>DENY</onMismatch>   <!--用于配置不符合过滤条件的操作-->
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${log.base}/archive/${log.moduleName}_all_%d{yyyy-MM-dd}.%i.log.zip
+            </FileNamePattern>
+            <!-- 当天的日志大小 超过${log.max.size}时,压缩日志并保存 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.max.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <!-- 日志输出的文件的格式  -->
+        <encoder>
+            <Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%logger{56}.%method:%L -%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders 作用是将logger事件转换成字节数组，并将字节数组写入到输出流-->
+        <encoder>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+            <Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%logger{56}.%method:%L -%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 将org.springframework.web包下的类的日志级别设置为DEBUG，
+        我们开发Spring MVC经常出现和参数类型相关的4XX错误，设置此项我们可以看到更相信的信息 -->
+    <logger name="org.springframework.web" level="info"/>
+
+    <!--
+        additivity的作用在于 children-logger是否使用 rootLogger配置的appender进行输出。
+
+        false：表示只用当前logger的appender-ref。
+        true：表示当前logger的appender-ref和rootLogger的appender-ref都有效。
+    -->
+    <logger name="com.dn.spring" level="debug" additivity="false">
+        <appender-ref ref="file"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+    </root>
+</configuration>

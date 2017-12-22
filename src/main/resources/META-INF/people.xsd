@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+        xmlns="http://www.zhang.people.com/schema/people"
+
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+
+        targetNamespace="http://www.zhang.people.com/schema/people"
+        elementFormDefault="qualified">
+
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+    <xsd:element name="people">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <!--
+                         复合元素之上以某个复合元素为基础，然后添加一些元素，
+                         具体的解释看http://www.w3school.com.cn/schema/schema_complex.asp
+                     -->
+                    <xsd:attribute name="name" type="xsd:string"/>
+                    <xsd:attribute name="age" type="xsd:int"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
