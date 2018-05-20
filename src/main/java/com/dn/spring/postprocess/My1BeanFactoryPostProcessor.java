@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * BeanFactoryPostProcessor 实现该接口可以完成对beanDifinition的修改
+ * BeanFactoryPostProcessor 实现该接口可以完成对 beanDifinition 的修改
  */
 @Component
 public class My1BeanFactoryPostProcessor implements BeanFactoryPostProcessor {

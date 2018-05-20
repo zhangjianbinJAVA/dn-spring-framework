@@ -19,7 +19,7 @@
     </bean>
 
     <!-- comtest:people 自定义标签-->
-    <!--xmlns:comtest="http://www.zhang.people.com/schema/people" 和spring.handlers先配置的连接一样-->
+    <!--xmlns:comtest="http://www.zhang.people.com/schema/people" 和spring.handlers中配置的uri一样-->
     <comtest:people id="cutesource" name="一号门" age="3232"/>
 
     <!--
