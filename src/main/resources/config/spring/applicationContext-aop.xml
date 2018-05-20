@@ -33,12 +33,12 @@
 
          强制使用CGLIB代理需要将 <aop:config> 的 proxy-target-class 属性设为true:
          proxy-target-class="true"
-         proxy-target-class="false"
+         proxy-target-class="false"  jdk代理
      -->
     <aop:config proxy-target-class="true">
         <!--自定义切面 myInterceptor-->
         <!--<aop:advisor advice-ref="myInterceptor" pointcut="execution(public * com.dn.spring.service..*.*(..))"-->
-                     <!--order="1"/>-->
+        <!--order="1"/>-->
         <!--
             <aop:pointcut> 在此处定义的pointcut是全局的 pointcut 可以供所有的 aspect 使用
             id:表示这个pointcut的名称，以方便使用
@@ -57,8 +57,8 @@
                 相当于往target目标类中增加了方法。这样做可以对目标类进行功能扩展，便于后期维护，满足开闭原则
              -->
             <!--<aop:declare-parents types-matching="com.dn.spring.service.MyServiceImpl"-->
-                                 <!--implement-interface="com.dn.spring.aop.IntroductionIntf"-->
-                                 <!--delegate-ref="myintroduction"/>-->
+            <!--implement-interface="com.dn.spring.aop.IntroductionIntf"-->
+            <!--delegate-ref="myintroduction"/>-->
             <!--
                  <aop:pointcut> 在此处定义的 pointcut 是全局的 pointcut 只供当前的 aspect 使用
                  id:表示这个 pointcut 的名称，以方便使用
@@ -73,10 +73,19 @@
             -->
 
             <!--method标签定义的方法执行顺序与位置有关系-->
+            <!--Before —— 在方法被调用之前调用通知；-->
             <aop:before method="before" pointcut-ref="myMethod2"/>
-            <aop:after-returning method="afterReturning" pointcut-ref="myMethod2"/>
+
+            <!--After —— 在方法完成之后调用通知，无论方法执行是否成功；-->
             <aop:after method="after" pointcut-ref="myMethod2"/>
+
+            <!--After-returning —— 在方法成功执行之后调用通知；-->
+            <aop:after-returning method="afterReturning" pointcut-ref="myMethod2"/>
+
+            <!--After-throwing —— 在方法抛出异常后调用通知；-->
             <aop:after-throwing method="afterthrowing" pointcut-ref="myMethod2"/>
+
+            <!--Around —— 通知包裹了被通知的方法，在被通知的方法调用之前和调用之后执行自定义的行为；-->
             <aop:around method="around" pointcut-ref="myMethod2"/>
 
             <!--<aop:before method="before" pointcut="execution(public * com.dongnao.jack.service..*.*(..))"/>-->
@@ -86,7 +95,6 @@
 
     <!--aop 注解的支持-->
     <!--<aop:aspectj-autoproxy/>-->
-
 
     <!--
      Spring AOP部分使用JDK动态代理或者CGLIB来为目标对象创建代理。（建议尽量使用JDK的动态代理）

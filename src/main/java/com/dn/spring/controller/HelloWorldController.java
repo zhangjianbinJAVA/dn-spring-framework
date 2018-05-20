@@ -21,6 +21,7 @@ public class HelloWorldController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class);
 
+
     @RequestMapping("/")
     public String helloTest() {
 
