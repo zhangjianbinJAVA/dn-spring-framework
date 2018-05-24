@@ -120,10 +120,10 @@
             <param-value>classpath:config/spring/springmvc.xml</param-value>
         </init-param>
 
-        <init-param>
-            <param-name>detectAllHandlerMappings</param-name>
-            <param-value>false</param-value>
-        </init-param>
+        <!--<init-param>-->
+            <!--<param-name>detectAllHandlerMappings</param-name>-->
+            <!--<param-value>false</param-value>-->
+        <!--</init-param>-->
         <!--
         1.如果web.xml中配置了<load-on-startup>属性,在Tomcat初始化时按其值从小到大的顺序加载所有servlet的init方法
         2.如果没有配置<load-on-startup>属性，容器初始化时不加载。在请求匹配的url时进行加载，
