@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dn.spring.mybatis.dao.UserMapper">
+
+    <resultMap id="userResultMap" type="com.dn.spring.mybatis.bean.UserDo">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+    </resultMap>
+
+    <insert id="save">
+        INSERT INTO t_user (`name`, `age`) VALUES (#{name}, #{age});
+    </insert>
+
+    <update id="update">
+        UPDATE t_user SET  `name`=#{name}, `age`=#{age} WHERE id=#{id};
+    </update>
+
+    <delete id="delete">
+    delete from  t_user where id=#{id}
+    </delete>
+
+    <select id="list" resultMap="userResultMap">
+        SELECT * from t_user;
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(1) from t_user;
+    </select>
+
+    <select id="oneUser" resultType="com.dn.spring.mybatis.bean.UserDo">
+      SELECT * from t_user where id =#{id}
+    </select>
+
+
+    <!--sql片段-->
+    <sql id="query_user_where_sql">
+        <if test="id!=null and id!=''">
+             id=#{id}
+        </if>
+    </sql>
+    <select id="selectUserById" resultType="com.dn.spring.mybatis.bean.UserDo">
+        SELECT * from t_user
+        <where>
+            <include refid="query_user_where_sql"/>
+        </where>
+    </select>
+
+</mapper>

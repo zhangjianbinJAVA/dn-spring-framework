@@ -11,13 +11,13 @@ import com.dongnao.jack.annotation.Service;
 
 @Service("requestParamArgumentResolver")
 public class RequestParamArgumentResolver implements ArgumentResolver {
-    
+
     public boolean support(Class<?> type, int paramIndex, Method method) {
-        
+
         Annotation[][] an = method.getParameterAnnotations();
-        
+
         Annotation[] paramAns = an[paramIndex];
-        
+
         for (Annotation paramAn : paramAns) {
             if (RequestParam.class.isAssignableFrom(paramAn.getClass())) {
                 return true;
@@ -25,25 +25,26 @@ public class RequestParamArgumentResolver implements ArgumentResolver {
         }
         return false;
     }
-    
+
     public Object argumentResolver(HttpServletRequest request,
-            HttpServletResponse response, Class<?> type, int paramIndex,
-            Method method) {
-        
+                                   HttpServletResponse response, Class<?> type, int paramIndex,
+                                   Method method) {
+
         Annotation[][] an = method.getParameterAnnotations();
-        
+
         Annotation[] paramAns = an[paramIndex];
-        
+
         for (Annotation paramAn : paramAns) {
             if (RequestParam.class.isAssignableFrom(paramAn.getClass())) {
-                RequestParam rp = (RequestParam)paramAn;
-                
+                RequestParam rp = (RequestParam) paramAn;
+
                 String value = rp.value();
+                // 根据 参数名称从request获取值
                 return request.getParameter(value);
             }
         }
-        
+
         return null;
     }
-    
+
 }

@@ -3,6 +3,8 @@ package com.dn.spring.controller;
 import com.dongnao.jack.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,6 @@ public class HelloWorldController {
 
     @RequestMapping("/")
     public String helloTest() {
-
         LOGGER.info("index");
         return "Index";
     }
@@ -32,11 +33,12 @@ public class HelloWorldController {
 
     @RequestMapping("/query-student")
     @ResponseBody
-    public Map student(@RequestParam(value = "age") Integer age){
+    public Map student(@RequestParam(value = "age") Integer age, @RequestBody(required = false) String body) {
         HashMap<Object, Object> result = new HashMap<>();
 
-        result.put("zhang","jianbin");
-        result.put("age",age);
+        result.put("zhang", "jianbin");
+        result.put("age", age);
+        result.put("body", body);
         return result;
     }
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
 
@@ -13,13 +14,14 @@ import java.beans.PropertyDescriptor;
  * user: zhangjianbin <br/>
  * date: 2017/12/22 10:05
  */
+//@Component
 public class My10InstantiationAwareBeanPostProcessor implements InstantiationAwareBeanPostProcessor {
     private static Logger logger = LoggerFactory.getLogger(My10InstantiationAwareBeanPostProcessor.class);
 
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
         logger.info("InstantiationAwareBeanPostProcessor接口 postProcessBeforeInstantiation产生代理bean （spring 的扩展点）");
-        return null;
+        return new Object();
     }
 
     @Override
@@ -29,17 +31,17 @@ public class My10InstantiationAwareBeanPostProcessor implements InstantiationAwa
 
     @Override
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
-        return null;
+        return pvs;
     }
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         logger.info("InstantiationAwareBeanPostProcessor接口 postProcessAfterInitialization对bean进行后置修改");
-        return null;
+        return bean;
     }
 }

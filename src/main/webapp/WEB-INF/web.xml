@@ -103,14 +103,15 @@
         Servlet接口和GenericServlet是不特定于任何协议的，而HttpServlet是特定于HTTP协议的类，
         所以HttpServlet中实现了service()方法，并将请求ServletRequest、ServletResponse 强转为HttpRequest 和 HttpResponse
     -->
-
     <!-- spring 子容器入口，也就是 spring mvc 入口 DispatcherServlet 类 -->
-    <!-- 不论是子容器还是父容器都会调用 AbstractApplicationContext 中的 refresh() 方法，所以 refresh() 方法 会被调用两次 -->
+    <!--
+    不论是子容器还是父容器都会调用 AbstractApplicationContext 中的 refresh() 方法，
+    所以 refresh() 方法 会被调用两次
+    -->
     <!-- springmvc的前端控制器 -->
     <servlet>
         <servlet-name>dn-spring-framework</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-
         <!--
 		contextConfigLocation不是必须的， 如果不配置contextConfigLocation，
 		 springmvc的配置文件默认在：WEB-INF/servlet的name+"-servlet.xml"
@@ -118,6 +119,10 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:config/spring/springmvc.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
         </init-param>
 
         <!--<init-param>-->
@@ -128,7 +133,6 @@
         1.如果web.xml中配置了<load-on-startup>属性,在Tomcat初始化时按其值从小到大的顺序加载所有servlet的init方法
         2.如果没有配置<load-on-startup>属性，容器初始化时不加载。在请求匹配的url时进行加载，
           并且只加载最后一个servlet的init方法。其他的servlet不加载
-
         -->
         <load-on-startup>1</load-on-startup>
     </servlet>

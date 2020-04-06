@@ -1,5 +1,7 @@
 package com.dn.spring.postprocess;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -7,28 +9,29 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
 
-
+@Component
 public class My4BeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
-		PriorityOrdered {
+        PriorityOrdered {
 
-	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory arg0)
-			throws BeansException {
-		// TODO Auto-generated method stub
+    private Logger logger = LoggerFactory.getLogger(My4BeanDefinitionRegistryPostProcessor.class);
 
-	}
 
-	@Override
-	public int getOrder() {
-		// TODO Auto-generated method stub
-		return 1;
-	}
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory arg0)
+            throws BeansException {
+        logger.info("BeanDefinitionRegistryPostProcessor postProcessBeanFactory PriorityOrdered My4BeanDefinitionRegistryPostProcessor");
 
-	@Override
-	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry arg0)
-			throws BeansException {
-		System.out.println("BeanDefinitionRegistryPostProcessor PriorityOrdered My4BeanDefinitionRegistryPostProcessor");
+    }
 
-	}
+    @Override
+    public int getOrder() {
+        return 1;
+    }
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry arg0)
+            throws BeansException {
+        logger.info("BeanDefinitionRegistryPostProcessor PriorityOrdered postProcessBeanDefinitionRegistry My4BeanDefinitionRegistryPostProcessor");
+    }
 
 }

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 
     <description>Spring mybatis配置</description>
@@ -17,81 +22,81 @@
             </list>
         </property>
     </bean>
-
     <!--或者-->
     <!--<context:property-placeholder location="classpath:config/config.properties"/>-->
 
 
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="maxPoolSize" value="100"/>
+        <property name="maxIdleTime" value="1800"/>
+        <property name="acquireIncrement" value="3"/>
+        <property name="maxStatements" value="1000"/>
+        <property name="initialPoolSize" value="10"/>
+        <property name="idleConnectionTestPeriod" value="60"/>
+        <property name="acquireRetryAttempts" value="30"/>
+        <property name="breakAfterAcquireFailure" value="false"/>
+        <property name="testConnectionOnCheckout" value="false"/>
+        <property name="acquireRetryDelay" value="100"/>
+    </bean>
 
-    <!--
-		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-			<property name="driverClass">
-				<value>org.gjt.mm.mysql.Driver</value>
-			</property>
-			<property name="jdbcUrl">
-				<value>jdbc:mysql://localhost:3306/consult</value>
-			</property>
-			<property name="user">
-				<value>myConsult</value>
-			</property>
-			<property name="password">
-				<value>123456</value>
-			</property>
-			<property name="minPoolSize" value="10" />
-			<property name="maxPoolSize" value="100" />
-			<property name="maxIdleTime" value="1800" />
-			<property name="acquireIncrement" value="3" />
-			<property name="maxStatements" value="1000" />
-			<property name="initialPoolSize" value="10" />
-			<property name="idleConnectionTestPeriod" value="60" />
-			<property name="acquireRetryAttempts" value="30" />
-			<property name="breakAfterAcquireFailure" value="false" />
-			<property name="testConnectionOnCheckout" value="false" />
-			<property name="acquireRetryDelay">
-				<value>100</value>
-			</property>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置MyBaties全局配置文件-->
+        <property name="configLocation" value="classpath:config/mybatis-config.xml"/>
+        <!--扫描 mapper需要的xml文件 -->
+        <property name="mapperLocations" value="classpath:com/dn/spring/mybatis/xml/*Mapper.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描 mapper 接口所在的包-->
+        <property name="basePackage" value="com.dn.spring.mybatis.dao"/>
+
+        <!-- 这个配置会导致 property-placeholder 加载配置文件失效-->
+        <!--<property name="sqlSessionFactory" value="sqlSessionFactory"/>-->
+
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- xml 方式配置事物 -->
+    <tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 当调用的方法是 save 开头时，则对该方法进行增强-->
+            <tx:method name="save*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException"/>
+            <tx:method name="delete*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException"/>
+            <tx:method name="update*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException"/>
+            <tx:method name="check*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException"/>
+            <tx:method name="print*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException"/>
+
+            <!-- 匹配任意方法 -->
+            <tx:method name="*" propagation="REQUIRED" read-only="false"
+                       isolation="READ_COMMITTED"
+                       rollback-for="java.lang.RuntimeException"/>
+        </tx:attributes>
+    </tx:advice>
+    <!-- xml方式 配置事务的切面-->
+    <aop:config>
+        <aop:pointcut id="pc" expression="execution(public * com.dn.spring.service..*.*(..))"/>
+        <aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice"/>
+    </aop:config>
 
 
-		</bean>
+    <!-- 基于注解的声明式事务,启用 注解事物 @Transactional -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
-		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-			<property name="dataSource" ref="dataSource" />
-			<property name="mapperLocations">
-				<value>classpath*:com/dongnao/jack/xml/*Mapper.xml</value>
-			</property>
-		</bean>
-
-		<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-			<property name="annotationClass" value="org.springframework.stereotype.Repository"/>
-			<property name="basePackage" value="com.dongnao.jack.dao"/>
-			<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-		</bean>
-
-
-		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-			<property name="dataSource" ref="dataSource"/>
-		</bean>
-		<tx:annotation-driven transaction-manager="transactionManager" />
-		<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
-			<tx:attributes>
-				<tx:method name="save*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="delete*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="update*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="check*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="print*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="*" propagation="REQUIRED" read-only="false" isolation="READ_COMMITTED"
-					rollback-for="java.lang.RuntimeException" />
-			</tx:attributes>
-		</tx:advice>
-		<aop:config>
-			<aop:pointcut id="pc"
-				expression="execution(public * com.consult.service.impl..*.*(..))" />
-			<aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
-		</aop:config>-->
 
 </beans>

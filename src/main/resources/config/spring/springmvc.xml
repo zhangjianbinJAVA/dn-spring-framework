@@ -11,16 +11,21 @@
         http://www.springframework.org/schema/mvc
 	    http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
+    <description>Spring mvc 配置</description>
+
     <!-- 开启controller注解支持 -->
     <!-- 注：如果base-package=com.dn.spring.controller 则注解事务不起作用 TODO 读源码-->
-    <context:component-scan base-package="com.dn.spring.controller" >
+    <context:component-scan base-package="com.dn.spring.controller">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>
         <context:exclude-filter type="annotation"
                                 expression="org.springframework.stereotype.Service"/>
     </context:component-scan>
 
-    <!-- 实现注释驱动Bean定义，同时将bean自动注入容器中使用。即解决了@Controller标识的类的bean的注入和使用 -->
+    <!--
+        实现注释驱动Bean定义，同时将bean自动注入容器中使用。
+        即解决了@Controller标识的类的bean的注入和使用
+    -->
     <!--<context:annotation-config/>-->
 
     <!-- 静态资源放行,不拦截 -->
@@ -43,29 +48,33 @@
         <property name="maxUploadSize" value="5242880"></property>
     </bean>
 
-
+    <!--重定向-->
     <!--<mvc:view-controller path="/" view-name="redirect:/index" />-->
 
+    <!-- DispatcherServlet.properties 配置文件中做了默认配置-->
     <!--DefaultAnnotationHandlerMapping已过时，改为 RequestMappingHandlerMapping-->
     <!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>-->
-
     <!--AnnotationMethodHandlerAdapter 已过时，改为 RequestMappingHandlerAdapter初始化 messageConverters 默认的消息转换器-->
-    <!--
-      <bean id="handlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-        <property name="messageConverters"> 消息转换器，在这里可以注册其它消息转换器
-            <list>
-                <ref bean="mappingJacksonHttpMessageConverter"/>
-                <ref bean="stringHttpMessageConverter"/>
-            </list>
-        </property>
-    </bean>
-    -->
+    <!--<bean id="handlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">-->
+    <!--    &lt;!&ndash;消息转换器，在这里可以注册其它消息转换器&ndash;&gt;-->
+    <!--    <property name="messageConverters">-->
+    <!--        <list>-->
+    <!--            <ref bean="mappingJacksonHttpMessageConverter"/>-->
+    <!--            <ref bean="stringHttpMessageConverter"/>-->
+    <!--        </list>-->
+    <!--    </property>-->
+    <!--</bean>-->
 
     <!--
-    相当于注册了 DefaultAnnotationHandlerMapping 和 AnnotationMethodHandlerAdapter两个bean，
-    配置一些 messageconverter。即解决了@Controller注解的使用前提配置
-    -->
-    <mvc:annotation-driven/>
+      启SpringMVC注解模式
+      简化配置：
+		1.自动注册 DefaultAnootationHandlerMapping,AnotationMethodHandlerAdapter 两个bean
+		2.提供一些列：数据绑定，数字和日期的format @NumberFormat, @DateTimeFormat, xml,json默认读写支持
+		3. 配置一些 messageconverter。即解决了@Controller注解的使用前提配置
+     -->
+    <!--
+     <mvc:annotation-driven/>
+     -->
 
     <!-- 解决springMVC响应数据乱码   text/plain 就是响应的时候原样返回数据 -->
     <mvc:annotation-driven>
@@ -86,6 +95,7 @@
         <property name="supportedMediaTypes">
             <list>
                 <value>text/html;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
             </list>
         </property>
     </bean>

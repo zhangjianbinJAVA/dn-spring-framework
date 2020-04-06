@@ -11,10 +11,11 @@
 
     <description>Spring aop 配置</description>
 
-
     <!-- service 实例化 -->
-    <bean id="myservice" class="com.dn.spring.service.MyServiceImpl"></bean>
-    <!--<bean id="myservice2" class="com.dn.spring.service.MyServiceImp2"></bean>-->
+    <bean id="xmlService" class="com.dn.spring.service.MyServiceImpl"></bean>
+
+    <bean id="xmlService2" class="com.dn.spring.service.MyServiceImp2"></bean>
+
 
     <!--切面 bean-->
     <bean id="myaspectj" class="com.dn.spring.aop.AopAspectj"></bean>
@@ -22,10 +23,11 @@
     <!-- 方法通过aop动态注入其它bean中 -->
     <bean id="myintroduction" class="com.dn.spring.aop.IntroductionClass"></bean>
 
-    <!--自己定义的通知必须要实现 MethodInterceptor-->
+    <!--自己定义的通知 advice 必须要实现 MethodInterceptor-->
     <bean id="myInterceptor" class="com.dn.spring.interceptor.MyInterceptor"></bean>
 
     <!--
+    aop:config: xml 配置方式的AOP配置
         <aop:pointcut>：用来定义切入点，该切入点可以重用；
          <aop:advisor>：用来定义只有一个通知和一个切入点的切面；
          <aop:aspect>：用来定义切面，该切面可以包含多个切入点和通知，而且标签内部的通知和切入点定义是无序的；
@@ -37,33 +39,52 @@
      -->
     <aop:config proxy-target-class="true">
         <!--自定义切面 myInterceptor-->
-        <!--<aop:advisor advice-ref="myInterceptor" pointcut="execution(public * com.dn.spring.service..*.*(..))"-->
-        <!--order="1"/>-->
+        <!--
+        <aop:advisor advice-ref="myInterceptor" pointcut="execution(public * com.dn.spring.service.MyServiceImpl.*(..))"
+        order="1"/>
+        -->
+
         <!--
             <aop:pointcut> 在此处定义的pointcut是全局的 pointcut 可以供所有的 aspect 使用
             id:表示这个pointcut的名称，以方便使用
         -->
 
         <!--
-             <aop:aspect>表示定义一个切面类(这需要Spring初始化加入其管理)
+             <aop:aspect>表示定义一个切面类(这需要Spring初始化时加入其管理)
              id:切面类的名称，
              ref:引用哪个bean(需要使用<bean>标签初始化)
          -->
         <aop:aspect id="txAspect" ref="myaspectj" order="2">
-
             <!-- 通过aop动态注入方法 -->
             <!--
                 切面中的该标签 declare-parents，是切面中的introduction引入，该标签的功能可以做到对target目标类的扩展，
                 相当于往target目标类中增加了方法。这样做可以对目标类进行功能扩展，便于后期维护，满足开闭原则
              -->
-            <!--<aop:declare-parents types-matching="com.dn.spring.service.MyServiceImpl"-->
-            <!--implement-interface="com.dn.spring.aop.IntroductionIntf"-->
-            <!--delegate-ref="myintroduction"/>-->
             <!--
+                 <aop:declare-parents types-matching="com.dn.spring.service.MyServiceImpl"
+                 implement-interface="com.dn.spring.aop.IntroductionIntf"
+                 delegate-ref="myintroduction"/>
+             -->
+
+            <!--
+            Spring AOP中@Pointcut语法详解
+            https://blog.csdn.net/qq_26860451/article/details/100554377?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task
+
+            execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern)  throws-pattern?)
+               　　　　ret-type-pattern,name-pattern(param-pattern)是必须的.
+               　　　　ret-type-pattern:标识方法的返回值，需要使用全路径的类名如java.lang.String,也可以为*表示任何返回值；
+               　　　　name-pattern:指定方法名,*代表所有,例如set*,代表以set开头的所有方法.
+               　　　　param-pattern:指定方法参数(声明的类型),(..)代表所有参数,(*)代表一个参数,(*,String)代表第一个参数为任何值,第二个为String类型.
+
+          @within和@target针对类的注解,
+          @annotation是针对方法的注解
+
+            在多个表达式之间使用 ||,or表示 或，使用 &&,and表示 与 ！表示
+
                  <aop:pointcut> 在此处定义的 pointcut 是全局的 pointcut 只供当前的 aspect 使用
                  id:表示这个 pointcut 的名称，以方便使用
              -->
-            <aop:pointcut id="myMethod2" expression="execution(public * com.dn.spring.service..*.*(..))"/>
+            <aop:pointcut id="myMethod2" expression="execution(public * com.dn.spring.service.MyServiceImpl.*(..))"/>
 
             <!--
                 定义 advice时 的参数
@@ -114,8 +135,8 @@
     proxy-target-class="true" 与proxy-target-class="false"的区别：
     proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。
     1.如果proxy-target-class 属性值被设置为true，那么基于类的代理将起作用（这时需要cglib库）。
-    2.如果proxy-target-class属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理
+    2.如果proxy-target-class 属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理
      -->
-    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
 </beans>

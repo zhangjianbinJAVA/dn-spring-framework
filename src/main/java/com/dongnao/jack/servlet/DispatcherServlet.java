@@ -46,7 +46,6 @@ public class DispatcherServlet extends HttpServlet {
      * Default constructor. 
      */
     public DispatcherServlet() {
-        // TODO Auto-generated constructor stub
     }
     
     /**
@@ -118,15 +117,12 @@ public class DispatcherServlet extends HttpServlet {
             method.invoke(instance, args);
         }
         catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -190,11 +186,9 @@ public class DispatcherServlet extends HttpServlet {
                             field.set(instance, beans.get(value));
                         }
                         catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                         catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -242,15 +236,12 @@ public class DispatcherServlet extends HttpServlet {
                 }
             }
             catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             catch (InstantiationException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

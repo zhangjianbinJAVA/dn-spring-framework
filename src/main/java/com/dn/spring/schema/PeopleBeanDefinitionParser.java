@@ -15,6 +15,12 @@ public class PeopleBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         return super.getParentName(element);
     }
 
+    /**
+     * spring 会将 People 实例化
+     *
+     * @param element
+     * @return
+     */
     @Override
     protected Class getBeanClass(Element element) {
         return People.class;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="1 seconds" debug="true">
+<configuration scan="true" scanPeriod="1 seconds" debug="false">
     <!-- 尽量别用绝对路径，如果带参数不同容器路径解释可能不同,以下配置参数在pom.xml里 -->
     <!-- 日志路径，这里是相对路径 -->
     <property name="log.base" value="${log.base}"/>
@@ -38,13 +38,14 @@
     </appender>
 
 
-    <!-- 将org.springframework.web包下的类的日志级别设置为DEBUG，
+    <!--
+        将org.springframework.web包下的类的日志级别设置为DEBUG，
         我们开发Spring MVC经常出现和参数类型相关的4XX错误，设置此项我们可以看到更相信的信息 -->
-    <logger name="org.springframework" level="DEBUG"/>
+    <!--<logger name="org.springframework" level="DEBUG"/>-->
 
-    <logger name="com.dn.spring" level="debug">
-        <appender-ref ref="file"/>
-    </logger>
+    <!--<logger name="com.dn.spring" level="DEBUG">-->
+    <!--    <appender-ref ref="file"/>-->
+    <!--</logger>-->
 
     <root level="info">
         <appender-ref ref="console"/>
